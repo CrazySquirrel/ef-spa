@@ -1,0 +1,44 @@
+{
+  "name": "ef-spa",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Even Faster Single Page Application – example web application",
+  "keywords": [
+    "single page application"
+  ],
+  "license": "MIT",
+  "author": "Sergei Iastrebov <info@crazysquirrel.ru>",
+  "homepage": "https://github.com/CrazySquirrel/ef-spa",
+  "bugs": {
+    "url": "https://github.com/CrazySquirrel/issues",
+    "email": "info@crazysquirrel.ru"
+  },
+  "man": "./README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CrazySquirrel/ef-spa"
+  },
+  "scripts": {
+    "postinstall": "git lfs update --force && cd ./node_modules/husky && npm run install -- --append"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@commitlint/cli": "^7.2.1",
+    "@commitlint/config-conventional": "^7.1.2",
+    "husky": "^1.2.0"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "post-commit": [
+        "git status"
+      ],
+      "post-checkout": [
+        "npm ci"
+      ],
+      "post-merge": [
+        "npm ci"
+      ]
+    }
+  }
+}
