@@ -1,0 +1,9 @@
+{
+  "name": "Even Faster Single Page Application",
+  "short_name": "ef-spa",
+  "icons": [
+
+  ],
+  "display": "standalone",
+  "orientation": "portrait"
+}

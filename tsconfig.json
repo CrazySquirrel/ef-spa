@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "target": "es5",
+    "jsx": "react",
+    "lib": [
+      "webworker",
+      "es6",
+      "dom"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "components/*": [
+        "src/components/*"
+      ],
+      "store/*": [
+        "src/store/*"
+      ]
+    }
+  },
+  "include": [
+    "./src/**/*",
+    "./server/**/*",
+    "./server.ts"
+  ],
+  "exclude": [
+    "./node_modules",
+    "**/*.example.*"
+  ]
+}
