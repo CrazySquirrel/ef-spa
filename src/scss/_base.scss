@@ -1,0 +1,31 @@
+@import "compass/css3";
+
+$media-phone-portrait: "screen and (max-width: 479px)";
+$media-phone-landscape: "screen and (min-width: 480px) and (max-width: 767px)";
+$media-tablet-portrait: "screen and (min-width: 768px) and (max-width: 1023px)";
+$media-tablet-landscape: "screen and (min-width: 1024px) and (max-width: 1279px)";
+$media-desktop-base: "screen and (min-width: 1280px) and (max-width: 1439px)";
+$media-desktop-big: "screen and (min-width: 1440px) and (max-width: 1599px)";
+$media-desktop-large: "screen and (min-width: 1600px) and (max-width: 1979px)";
+$media-desktop-huge: "screen and (min-width: 1980px) and (max-width: 2559px)";
+$media-desktop-imac: "screen and (min-width: 2560px)";
+
+$media-print: "print";
+
+$media-retina: "only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx)";
+
+@mixin retinabg($url, $url2x, $size, $position, $repeat) {
+  background-image: image-url($url);
+  background-repeat: $repeat;
+  background-position: $position;
+  background-size: $size;
+  @media #{$media-retina} {
+    background-image: image-url($url2x);
+    background-size: $size;
+  }
+}
+
+@mixin fontsize($fontsize,$lineheight:1.4) {
+  font-size: $fontsize;
+  line-height: $lineheight;
+}

@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const glob = require('glob');
 
 const PACKAGE = require('../package.json');
 const WebManifest = require('../public/favicon/site.webmanifest.json');
@@ -15,6 +16,15 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
+
+const serviceWorkerCachePaths = [
+  '/',
+  '/static/index.css',
+  '/static/index.js',
+  ...glob.sync('./public/favicon/**/*.*').map((v) => {
+    return v.replace('./public/', '/');
+  })
+].filter((v, i, a) => a.indexOf(v) === i);
 
 const getTarget = (target) => {
   const isClient = target === 'client';
@@ -40,7 +50,7 @@ const getEntry = (target) => {
       index: './src/client.tsx',
 
       inline: [
-        './src/inline.scss',
+        './src/scss/inline.scss',
         './src/inline.ts'
       ]
     };
@@ -206,7 +216,8 @@ module.exports = (target, mode) => {
               loader: 'sass-loader',
               options: {
                 includePaths: [
-                  path.resolve(__dirname, '../src')
+                  path.resolve(__dirname, '../src'),
+                  path.resolve(__dirname, '../node_modules/compass-mixins/lib')
                 ],
                 minimize: isProduction,
                 sourceMap: isDevelopment
@@ -247,8 +258,7 @@ module.exports = (target, mode) => {
             filename: 'index.html',
             template: 'public/index.html',
             excludeAssets: [
-              /inline.(css|js)/,
-              /index\.css/
+              /inline.(css|js)/
             ]
           }),
           new HtmlWebpackExcludeAssetsPlugin()
@@ -260,6 +270,7 @@ module.exports = (target, mode) => {
         target: JSON.stringify(target),
         mode: JSON.stringify(mode),
         webmanifest: JSON.stringify(WebManifest),
+        serviceWorkerCachePaths: JSON.stringify(serviceWorkerCachePaths),
         'process.env.NODE_ENV': JSON.stringify(mode)
       }),
       new SpriteLoaderPlugin({
