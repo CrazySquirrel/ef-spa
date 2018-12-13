@@ -6,7 +6,7 @@ module.exports = {
   "coverageReporters": ["json", "html"],
   "coveragePathIgnorePatterns": [
     "/node_modules/",
-    "/test/"
+    "/tests/"
   ],
   "coverageThreshold": {
     "global": {
@@ -22,8 +22,8 @@ module.exports = {
   },
 
   "setupFiles": [
-    "<rootDir>/test/test-shim.js",
-    "<rootDir>/test/test-setup.js"
+    "<rootDir>/tests/test-shim.js",
+    "<rootDir>/tests/test-setup.js"
   ],
 
   "moduleFileExtensions": [
@@ -33,7 +33,7 @@ module.exports = {
   ],
 
   "transform": {
-    "^.+\\.(ts|tsx)$": "<rootDir>/test/test-preprocessor.js"
+    "^.+\\.(ts|tsx)$": "<rootDir>/tests/test-preprocessor.js"
   },
 
   "testMatch": [
