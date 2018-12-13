@@ -29,6 +29,7 @@
     "postinstall": "git lfs update --force && cd ./node_modules/husky && npm run install -- --append"
   },
   "dependencies": {
+    "@sentry/browser": "^4.4.1",
     "bem-cn": "^2.1.3",
     "body-parser": "^1.18.3",
     "compass-mixins": "^0.12.10",
@@ -39,6 +40,7 @@
     "express-static-gzip": "^1.1.3",
     "html-minifier": "^3.5.19",
     "normalize.css": "^8.0.1",
+    "raven": "^2.6.4",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-redux": "^5.1.1",

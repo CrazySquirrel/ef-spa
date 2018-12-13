@@ -4,6 +4,7 @@ const glob = require('glob');
 
 const PACKAGE = require('../package.json');
 const WebManifest = require('../public/favicon/site.webmanifest.json');
+const serverConfig = require('../server.config');
 
 const nodeExternals = require('webpack-node-externals');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
@@ -110,7 +111,7 @@ module.exports = (target, mode) => {
     ] : [],
     cache: isDevelopment,
     bail: isProduction,
-    devtool: isDevelopment ? 'source-map' : '',
+    devtool: 'source-map',
     entry: getEntry(target),
     stats: {
       children: false
@@ -171,14 +172,14 @@ module.exports = (target, mode) => {
               loader: require.resolve('css-loader'),
               options: {
                 minimize: isProduction,
-                sourceMap: isDevelopment
+                sourceMap: true
               }
             },
             {
               loader: require.resolve('postcss-loader'),
               options: {
                 minimize: isProduction,
-                sourceMap: isDevelopment,
+                sourceMap: true,
                 ident: 'postcss',
                 plugins: () => [
                   require('postcss-flexbugs-fixes'),
@@ -197,14 +198,14 @@ module.exports = (target, mode) => {
               loader: require.resolve('css-loader'),
               options: {
                 minimize: isProduction,
-                sourceMap: isDevelopment
+                sourceMap: true
               }
             },
             {
               loader: require.resolve('postcss-loader'),
               options: {
                 minimize: isProduction,
-                sourceMap: isDevelopment,
+                sourceMap: true,
                 ident: 'postcss',
                 plugins: () => [
                   require('postcss-flexbugs-fixes'),
@@ -220,7 +221,7 @@ module.exports = (target, mode) => {
                   path.resolve(__dirname, '../node_modules/compass-mixins/lib')
                 ],
                 minimize: isProduction,
-                sourceMap: isDevelopment
+                sourceMap: true
               }
             }
           ]
@@ -271,6 +272,7 @@ module.exports = (target, mode) => {
         mode: JSON.stringify(mode),
         webmanifest: JSON.stringify(WebManifest),
         serviceWorkerCachePaths: JSON.stringify(serviceWorkerCachePaths),
+        sentry: JSON.stringify(serverConfig.apps[0].SENTRY),
         'process.env.NODE_ENV': JSON.stringify(mode)
       }),
       new SpriteLoaderPlugin({
@@ -315,7 +317,7 @@ module.exports = (target, mode) => {
         new UglifyJsPlugin({
           cache: true,
           parallel: true,
-          sourceMap: false,
+          sourceMap: true,
           extractComments: true
         }),
         new OptimizeCSSAssetsPlugin({})

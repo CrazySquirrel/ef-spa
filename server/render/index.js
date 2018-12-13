@@ -52,60 +52,67 @@ function render({url, searchText, csrf}) {
 }
 
 // Export express subroutines
-module.exports = (APP) => {
+module.exports = (APP, RAVEN) => {
   // Use server side rendering as fallback for all routs
   APP.get('*', (req, res) => {
-    // Server side render
-    const {context, result, store} = render({
-      csrf: req.csrfToken()
-    });
-
-    if (context.url) {
-      // If context contains redirect, go ot it
-      res.redirect(302, context.url);
-    } else {
-      // Render html
-      Promise.all(
-          [
-            'static/index.html',
-            'static/inline.css',
-            'static/inline.js'
-          ].map(file => {
-            // Get bundles
-            return new Promise((_resolve) => {
-              return FS.readFile(
-                  PATH.resolve(STATIC, file), 'utf8',
-                  (err, out) => err ? _resolve('') : _resolve(out)
-              );
-            });
-          })
-      ).then(([
-        HTML,
-        INLINE_STYLE,
-        INLINE_SCRIPT
-      ]) => {
-        // Replace placeholders in html template
-        const html = HTML
-        .replace(
-            /%INLINE_STYLE%/ig,
-            INLINE_STYLE
-        )
-        .replace(
-            /%INLINE_SCRIPT%/ig,
-            INLINE_SCRIPT
-        )
-        .replace(
-            /%APP%/ig,
-            result
-        )
-        .replace(
-            /%PRELOADED_STATE%/ig,
-            serialize(store.getState())
-        );
-        // Response rendered html
-        res.set('content-type', 'text/html');
-        res.send(html);
+    try {
+      // Server side render
+      const {context, result, store} = render({
+        csrf: req.csrfToken()
       });
+
+      if (context.url) {
+        // If context contains redirect, go ot it
+        res.redirect(302, context.url);
+      } else {
+        // Render html
+        Promise.all(
+            [
+              'static/index.html',
+              'static/inline.css',
+              'static/inline.js'
+            ].map(file => {
+              // Get bundles
+              return new Promise((_resolve) => {
+                return FS.readFile(
+                    PATH.resolve(STATIC, file), 'utf8',
+                    (err, out) => err ? _resolve('') : _resolve(out)
+                );
+              });
+            })
+        ).then(([
+          HTML,
+          INLINE_STYLE,
+          INLINE_SCRIPT
+        ]) => {
+          // Replace placeholders in html template
+          const html = HTML
+          .replace(
+              /%INLINE_STYLE%/ig,
+              INLINE_STYLE
+          )
+          .replace(
+              /%INLINE_SCRIPT%/ig,
+              INLINE_SCRIPT
+          )
+          .replace(
+              /%APP%/ig,
+              result
+          )
+          .replace(
+              /%PRELOADED_STATE%/ig,
+              serialize(store.getState())
+          );
+          // Response rendered html
+          res.set('content-type', 'text/html');
+          res.send(html);
+        });
+      }
+    } catch (e) {
+      RAVEN.captureException(e);
+
+      res.writeHead(500);
+      res.end();
     }
   });
 };

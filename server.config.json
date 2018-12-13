@@ -14,6 +14,7 @@
       "env": {
         "NODE_ENV": "production"
       },
+      "SENTRY": "https://32d1cdb6c95d47978e7a916cd1e8fbca@sentry.io/1353127",
       "development": {
         "PORTS": {
           "MAIN": "7600",

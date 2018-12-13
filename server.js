@@ -10,6 +10,8 @@ const PORTS = SERVER_SETTINGS.apps[0][process.env.NODE_ENV].PORTS;
 // Get static path
 const STATIC = __dirname + '/build';
 
+const PACKAGE = require('./package.json');
+
 // Import dependencies
 const FS = require('fs');
 const NET = require('net');
@@ -21,9 +23,22 @@ const BODY_PARSER = require('body-parser');
 const STATIC_GZIP = require('express-static-gzip');
 const COMPRESSION = require('compression');
 const CSRF = require('csurf');
+const RAVEN = require('raven');
+
+// Set up sentry
+RAVEN.config(
+    SERVER_SETTINGS.apps[0].SENTRY,
+    {
+      release: PACKAGE.version,
+      environment: process.env.NODE_ENV
+    }
+).install();
 
 // Get express app
 const APP = EXPRESS();
+
+// Error handler
+APP.use(RAVEN.requestHandler());
 
 // Add compressing
 APP.use(COMPRESSION());
@@ -74,7 +89,7 @@ APP.use(
 // Add subroutines
 
 // Add server site rendering
-require('./server/render/index.js')(APP);
+require('./server/render/index.js')(APP, RAVEN);
 
 // Set up port
 APP.set('port', PORTS.MAIN);
