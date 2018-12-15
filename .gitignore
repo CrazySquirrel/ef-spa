@@ -1,8 +1,12 @@
 .idea
 .DS_Store
+.cache-loader
+
 *.log
 
 /node_modules
 
 /build
 /coverage
+/hermione-report
+/stat-reporter
