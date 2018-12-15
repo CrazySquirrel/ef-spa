@@ -2,6 +2,7 @@
 
 const FS = require('fs');
 const PATH = require('path');
+const MINIFY_HTML = require('html-minifier').minify;
 
 // Get static path
 const STATIC = __dirname + '/../../build';
@@ -17,7 +18,7 @@ const {createStore} = require('redux');
 const {Provider} = require('react-redux');
 
 // React server side render method
-function render({url, searchText, csrf}) {
+function render({url, csrf}) {
   // Clear server bundle cache
   delete require.cache[require.resolve(STATIC + '/server/index.js')];
   // Get server bundle
@@ -58,7 +59,9 @@ module.exports = (APP, RAVEN) => {
     try {
       // Server side render
       const {context, result, store} = render({
-        csrf: req.csrfToken()
+        url: req.url.replace('index.html', ''),
+        csrf: req.csrfToken(),
+        aside: true
       });
 
       if (context.url) {
@@ -70,7 +73,8 @@ module.exports = (APP, RAVEN) => {
             [
               'static/index.html',
               'static/inline.css',
-              'static/inline.js'
+              'static/inline.js',
+              'static/sprite.svg',
             ].map(file => {
               // Get bundles
               return new Promise((_resolve) => {
@@ -83,25 +87,26 @@ module.exports = (APP, RAVEN) => {
         ).then(([
           HTML,
           INLINE_STYLE,
-          INLINE_SCRIPT
+          INLINE_SCRIPT,
+          SVG
         ]) => {
           // Replace placeholders in html template
-          const html = HTML
-          .replace(
-              /%INLINE_STYLE%/ig,
-              INLINE_STYLE
-          )
-          .replace(
-              /%INLINE_SCRIPT%/ig,
-              INLINE_SCRIPT
-          )
-          .replace(
-              /%APP%/ig,
-              result
-          )
-          .replace(
-              /%PRELOADED_STATE%/ig,
-              serialize(store.getState())
+          const html = MINIFY_HTML(
+              HTML
+              .replace(/%INLINE_STYLE%/ig, INLINE_STYLE)
+              .replace(/%INLINE_SCRIPT%/ig, INLINE_SCRIPT)
+              .replace(/%APP%/ig, result)
+              .replace(/%SVG_SPRITE%/ig, SVG)
+              .replace(/%PRELOADED_STATE%/ig, serialize(store.getState())),
+              {
+
+                removeComments: true,
+                collapseWhitespace: true,
+                collapseBooleanAttributes: true,
+                removeAttributeQuotes: true,
+                removeEmptyAttributes: true,
+                minifyJS: true
+              }
           );
           // Response rendered html
           res.set('content-type', 'text/html');

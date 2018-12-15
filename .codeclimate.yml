@@ -1,0 +1,46 @@
+engines:
+  editorconfig:
+    enabled: true
+  eslint:
+    enabled: true
+  markdownlint:
+    enabled: true
+  nodesecurity:
+    enabled: true
+  tslint:
+    enabled: true
+    config: tslint.json
+ratings:
+  paths:
+    - src/**
+exclude_paths:
+  - .cache-loader/
+  - build/
+  - config/
+  - coverage/
+  - hermione/
+  - hermione-report/
+  - node_modules/
+  - src/**/*.test.tsx
+  - src/**/*.test.ts
+  - src/**/__snapshots__
+  - stat-reporter/
+  - tests/
+  - .babelrc
+  - .codeclimate.yml
+  - .eslintrc.json
+  - .gitattributes
+  - .gitignore
+  - .hermione.conf.js
+  - CHANGELOG.md
+  - docker-compose-selenium.yml
+  - err.log
+  - jest.config.js
+  - LICENSE.md
+  - out.log
+  - package.json
+  - package-lock.json
+  - server.config.json
+  - STYLE_GUIDE.xml
+  - tsconfig.json
+  - tslint.json

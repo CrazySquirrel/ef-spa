@@ -103,30 +103,42 @@ function getCertificates() {
     }
   ].filter((v) => FS.existsSync(v.key) && FS.existsSync(v.cert))[0];
 
-  return {
-    key: FS.readFileSync(certificates.key),
-    cert: FS.readFileSync(certificates.cert),
-  };
+  if (certificates) {
+    return {
+      key: FS.readFileSync(certificates.key),
+      cert: FS.readFileSync(certificates.cert),
+    };
+  }
 }
 
-// Set up http to http2 switcher
-NET.createServer((conn) => {
-  conn.once('data', (buf) => {
-    const proxy = NET.createConnection(
-        buf[0] === 22 ? PORTS.HTTP2 : PORTS.HTTP,
-        () => {
-          proxy.write(buf);
-          conn.pipe(proxy).pipe(conn);
-        }
-    );
-  });
-}).listen(PORTS.MAIN);
+// Get certificates
+const certificates = getCertificates();
 
-// Set up http to https switcher
-HTTP.createServer((req, res) => {
-  res.writeHead(301, {'Location': 'https://' + req.headers['host'] + req.url});
-  res.end();
-}).listen(PORTS.HTTP);
+// Check certificates
+if (certificates) {
+  // If we've any certificates
 
-// Start http2 server
-SPDY.createServer(getCertificates(), APP).listen(PORTS.HTTP2);
+  // Set up http to http2 switcher
+  NET.createServer((conn) => {
+    conn.once('data', (buf) => {
+      const proxy = NET.createConnection(
+          buf[0] === 22 ? PORTS.HTTP2 : PORTS.HTTP,
+          () => {
+            proxy.write(buf);
+            conn.pipe(proxy).pipe(conn);
+          }
+      );
+    });
+  }).listen(PORTS.MAIN);
+
+  // Set up http to https switcher
+  HTTP.createServer(APP).listen(PORTS.HTTP);
+
+  // Start http2 server
+  SPDY.createServer(getCertificates(), APP).listen(PORTS.HTTP2);
+} else {
+  // If we don't have any certificates
+
+  // Set up http server
+  HTTP.createServer(APP).listen(PORTS.HTTP);
+}

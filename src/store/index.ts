@@ -4,15 +4,21 @@ declare const global: any;
 import {createStore, compose} from 'redux';
 import {Action} from 'redux-actions';
 
+import {RouteHandle, RouteStore} from 'store/reducers/router/index';
+import {AsideHandle, AsideStore} from 'store/reducers/aside/index';
 import {CSRFHandle, CSRFStore} from 'store/reducers/csrf/index';
 
 const localWindow: any = typeof window === 'undefined' ? (typeof global === 'undefined' ? global : {}) : window;
 
-export interface StoreTree extends CSRFStore {
+export interface StoreTree extends RouteStore,
+    AsideStore,
+    CSRFStore {
   modified: string;
 }
 
 const Handlers = [
+  RouteHandle,
+  AsideHandle,
   CSRFHandle,
 ];
 
@@ -26,6 +32,12 @@ export const Store = createStore(
       ) as StoreTree;
     },
     localWindow.__PRELOADED_STATE__ || {
+      modified: '',
+
+      location: '/',
+
+      aside: undefined,
+
       csrf: '',
     },
     composeEnhancers(),

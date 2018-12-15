@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import {shallow} from 'enzyme';
 
-import App from './index';
+import {App} from './index';
 
-it('renders the heading', () => {
-  const result = shallow(<App />);
-  
-  expect(result).toMatchSnapshot();
+describe('App', () => {
+  it('render', () => {
+    const result = shallow(<App/>);
+
+    expect(result).toMatchSnapshot();
+  });
 });

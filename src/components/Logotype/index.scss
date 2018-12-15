@@ -1,0 +1,14 @@
+.logotype {
+  transition: fill .2s;
+  fill: #02b3e4;
+  cursor: pointer;
+  display: block;
+  padding: 8px;
+  height: 64px;
+  width: 64px;
+  box-sizing: border-box;
+
+  svg {
+    cursor: pointer;
+  }
+}

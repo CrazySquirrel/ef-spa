@@ -1,14 +1,12 @@
 import * as React from 'react';
 import * as bem from 'bem-cn';
 
-import './index.scss';
+import {Metadata} from '../../types';
 
-export interface Props extends React.Props<Unexist> {
-  to?: string;
-  className?: string;
-  replaceClassName?: string;
-  title?: string;
+interface Props extends Metadata {
 }
+
+import './index.scss';
 
 export default class Unexist extends React.Component<Props, {}> {
   public render() {
@@ -16,7 +14,7 @@ export default class Unexist extends React.Component<Props, {}> {
 
     return (
         <section className={block()}>
-          {this.props.children}
+          <h1 className={block('title')()}>{this.props.h1}</h1>
         </section>
     );
   }

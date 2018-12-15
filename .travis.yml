@@ -1,0 +1,17 @@
+language: node_js
+node_js: '6'
+install: npm install
+script:
+  - npm run lint
+  - npm run test:jest
+  - npm run test:hermione
+  - npm run build:production
+after_success:
+  - npm install -g codeclimate-test-reporter
+  - codeclimate-test-reporter < coverage/lcov.info
+addons:
+  code_climate:
+    repo_token: 7855ec12b0d87cd0f4424c8ee761a40d71c1d3a818e62abbab91ef4998c81ca2
+branches:
+  only:
+    - master
