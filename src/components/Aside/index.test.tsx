@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {shallow} from 'enzyme';
 
-import {App} from './index';
+import {Aside} from './index';
 
-describe('App', () => {
+describe('Aside', () => {
   it('render', () => {
-    const result = shallow(<App/>);
+    const result = shallow(<Aside/>);
 
     expect(result).toMatchSnapshot();
   });

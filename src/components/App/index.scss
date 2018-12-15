@@ -1,0 +1,28 @@
+@import "../../scss/base";
+
+.app {
+  max-width: 1280px;
+  margin: 0 auto;
+  background: #FFF;
+  @include display-flex;
+  @include flex-direction(row);
+  @include flex-wrap(nowrap);
+  overflow: hidden;
+  position: relative;
+
+  &-svg {
+    display: none;
+  }
+
+  &__metadata {
+    position: absolute;
+    left: -10000px;
+    top: -10000px;
+  }
+}
+
+@media #{$media-phone-portrait} {
+  .app {
+    @include flex-direction(column);
+  }
+}

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {shallow} from 'enzyme';
 
-import {App} from './index';
+import Logotype from './index';
 
-describe('App', () => {
+describe('Logotype', () => {
   it('render', () => {
-    const result = shallow(<App/>);
+    const result = shallow(<Logotype/>);
 
     expect(result).toMatchSnapshot();
   });

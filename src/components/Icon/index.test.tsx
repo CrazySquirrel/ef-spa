@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {shallow} from 'enzyme';
 
-import {App} from './index';
+import {IconChat} from './index';
 
-describe('App', () => {
+describe('IconChat', () => {
   it('render', () => {
-    const result = shallow(<App/>);
+    const result = shallow(<IconChat/>);
 
     expect(result).toMatchSnapshot();
   });

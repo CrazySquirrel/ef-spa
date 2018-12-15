@@ -8,7 +8,7 @@ interface State {
   error: any;
 }
 
-export class Boundary extends React.Component<Props, State> {
+export default class Boundary extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {shallow} from 'enzyme';
 
-import {App} from './index';
+import Link from './index';
 
-describe('App', () => {
+describe('Link', () => {
   it('render', () => {
-    const result = shallow(<App/>);
+    const result = shallow(<Link/>);
 
     expect(result).toMatchSnapshot();
   });

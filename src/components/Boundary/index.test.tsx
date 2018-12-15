@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {shallow} from 'enzyme';
 
-import {App} from './index';
+import Boundary from './index';
 
-describe('App', () => {
+describe('Boundary', () => {
   it('render', () => {
-    const result = shallow(<App/>);
+    const result = shallow(<Boundary/>);
 
     expect(result).toMatchSnapshot();
   });

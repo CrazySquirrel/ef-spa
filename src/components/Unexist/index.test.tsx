@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {shallow} from 'enzyme';
 
-import {App} from './index';
+import Unexist from './index';
 
-describe('App', () => {
+describe('Unexist', () => {
   it('render', () => {
-    const result = shallow(<App/>);
+    const result = shallow(<Unexist/>);
 
     expect(result).toMatchSnapshot();
   });
