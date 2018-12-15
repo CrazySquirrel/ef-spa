@@ -13,16 +13,27 @@ import {StoreTree} from '../../store';
 import {connect} from 'react-redux';
 
 import {
-  Metadata,
   MetadataImage,
   MetadataVideo,
   MetadataAudio,
   MetadataType,
+  MetadataAuthor,
 } from '../../types';
 
 declare const webmanifest: any;
 
-interface Props extends Metadata {
+interface Props {
+  menu?: string;
+  title?: string;
+  description?: string;
+  keywords?: string;
+  h1?: string;
+  type?: MetadataType;
+  author?: MetadataAuthor;
+  images?: MetadataImage[];
+  videos?: MetadataVideo[];
+  audios?: MetadataAudio[];
+
   location?: string;
   modified?: string;
 
@@ -37,7 +48,7 @@ interface State {
 import './index.scss';
 
 export class App extends React.Component<Props, State> {
-  private images: MetadataImage;
+  private images: MetadataImage[];
 
   public constructor(props: Props) {
     super(props);
@@ -157,8 +168,12 @@ export class App extends React.Component<Props, State> {
 
             {this.images && this.images.map((v: MetadataImage) => {
               return (
-                  <span key={v.src} itemScope={true} itemProp='image'
-                        itemType='https://schema.org/ImageObject'>
+                  <span
+                      key={v.src}
+                      itemScope={true}
+                      itemProp='image'
+                      itemType='https://schema.org/ImageObject'
+                  >
                     <link itemProp='contentUrl' href={v.src}/>
                     <link itemProp='url' href={v.src}/>
                     <meta itemProp='width' content={v.width}/>

@@ -29,10 +29,5 @@
     "max-classes-per-file": false,
     "no-bitwise": false
   },
-  "rulesDirectory": [],
-  "linterOptions": {
-    "exclude": [
-      "**/*.example.*"
-    ]
-  }
+  "rulesDirectory": []
 }

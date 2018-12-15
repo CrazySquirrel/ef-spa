@@ -1,9 +1,25 @@
 import * as React from 'react';
 import * as bem from 'bem-cn';
 
-import {Metadata} from '../../types';
+import {
+  MetadataAudio,
+  MetadataAuthor,
+  MetadataImage,
+  MetadataType,
+  MetadataVideo,
+} from '../../types';
 
-interface Props extends Metadata {
+interface Props {
+  menu?: string;
+  title?: string;
+  description?: string;
+  keywords?: string;
+  h1?: string;
+  type?: MetadataType;
+  author?: MetadataAuthor;
+  images?: MetadataImage[];
+  videos?: MetadataVideo[];
+  audios?: MetadataAudio[];
 }
 
 import './index.scss';
