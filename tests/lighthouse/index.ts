@@ -121,7 +121,7 @@ describe('LightHouse', () => {
         if (SCOREs[url]) {
           CHAI.expect(score).to.be.at.least(SCOREs[url]);
         } else {
-          CHAI.expect(score).to.be.at.least(90);
+          CHAI.expect(score).to.be.at.least(0.9);
         }
 
         // Save new score
