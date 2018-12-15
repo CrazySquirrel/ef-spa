@@ -3,11 +3,14 @@ module.exports = {
   "verbose": true,
 
   "collectCoverage": true,
-  "coverageReporters": ["json", "html"],
+  "coverageReporters": ["json", "html", "lcov"],
+
   "coveragePathIgnorePatterns": [
     "/node_modules/",
-    "/tests/"
+    "/tests/",
+    ".scss"
   ],
+
   "coverageThreshold": {
     "global": {
       "branches": 50,
@@ -32,8 +35,18 @@ module.exports = {
     "js"
   ],
 
+  "moduleNameMapper": {
+    "^types(.*)$": "<rootDir>/src/types$1",
+    "^components(.*)$": "<rootDir>/src/components$1",
+    "^store(.*)$": "<rootDir>/src/store$1",
+    "^webworker(.*)$": "<rootDir>/src/webworker$1",
+    "^utils(.*)$": "<rootDir>/src/utils$1",
+  },
+
   "transform": {
-    "^.+\\.(ts|tsx)$": "<rootDir>/tests/test-preprocessor.js"
+    "^.+\\.(ts|tsx)$": "<rootDir>/tests/test-preprocessor.js",
+    "^.+\\.(svg)$": "jest-svg-transformer",
+    "^.+\\.(css|less|scss)$": "<rootDir>/tests/test-style-mock.js",
   },
 
   "testMatch": [
