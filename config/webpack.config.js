@@ -18,8 +18,12 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
 
+const Pages = glob.sync('./src/pages/**/index.tsx').map((v) => {
+  return v.replace('./src/', '');
+});
+
 const serviceWorkerCachePaths = [
-  '/',
+  ...Pages.map((v) => v.replace('pages/', '/').replace('/index.tsx', '/')),
   '/static/index.css',
   '/static/index.js',
   ...glob.sync('./public/favicon/**/*.*').map((v) => {
@@ -146,6 +150,7 @@ module.exports = (target, mode) => {
         {
           test: /\.(js|jsx)$/,
           use: [
+            'cache-loader',
             'babel-loader',
             'eslint-loader'
           ],
@@ -154,6 +159,7 @@ module.exports = (target, mode) => {
         {
           test: /\.(ts|tsx)$/,
           use: [
+            'cache-loader',
             'ts-loader',
             'tslint-loader'
           ],
@@ -161,6 +167,9 @@ module.exports = (target, mode) => {
             path.resolve(__dirname, '../src'),
             path.resolve(__dirname, '../server'),
             path.resolve(__dirname, '../server.ts')
+          ],
+          exclude: [
+            /.*\.test\.(ts|tsx)/ig
           ]
         },
         {
@@ -168,6 +177,7 @@ module.exports = (target, mode) => {
           use: [
             isDevelopment ? require.resolve('style-loader')
               : MiniCssExtractPlugin.loader,
+            'cache-loader',
             {
               loader: require.resolve('css-loader'),
               options: {
@@ -194,6 +204,7 @@ module.exports = (target, mode) => {
           use: [
             isDevelopment ? require.resolve('style-loader')
               : MiniCssExtractPlugin.loader,
+            'cache-loader',
             {
               loader: require.resolve('css-loader'),
               options: {
@@ -229,6 +240,7 @@ module.exports = (target, mode) => {
         {
           test: /\.(jpe?g|png|gif)$/,
           use: [
+            'cache-loader',
             {
               loader: 'url-loader',
               options: {
@@ -241,6 +253,7 @@ module.exports = (target, mode) => {
         {
           test: /\.svg$/,
           use: [
+            'cache-loader',
             {
               loader: 'svg-sprite-loader',
               options: {
@@ -292,10 +305,6 @@ module.exports = (target, mode) => {
         {
           from: path.resolve(__dirname, '../public/favicon'),
           to: path.resolve(__dirname, '../build/favicon')
-        },
-        {
-          from: path.resolve(__dirname, '../src/fonts'),
-          to: path.resolve(__dirname, '../build/fonts')
         },
         {
           from: path.resolve(__dirname, '../public/robots.txt'),
