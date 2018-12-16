@@ -66,7 +66,6 @@ module.exports = {
       logs: [
         {
           on: 'fail',
-          text: 'FAQ: https://wiki.yandex-team.ru/search-interfaces/testing/hermione/#faq',
           color: 'bold.yellow'
         }
       ]
