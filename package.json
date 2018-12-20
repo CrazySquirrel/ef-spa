@@ -7,7 +7,11 @@
     "single page application"
   ],
   "license": "MIT",
-  "author": "Sergei Iastrebov <info@crazysquirrel.ru>",
+  "author": {
+    "name": "Sergei Iastrebov",
+    "email": "info@crazysquirrel.ru",
+    "url": "https://crazysquirrel.ru"
+  },
   "homepage": "https://github.com/CrazySquirrel/ef-spa",
   "bugs": {
     "url": "https://github.com/CrazySquirrel/issues",
@@ -23,6 +27,9 @@
     "build:production": "webpack --config ./config/webpack.production.config.js",
     "build:development:watch": "webpack --config ./config/webpack.development.config.js --watch",
     "build:production:watch": "webpack --config ./config/webpack.production.config.js --watch",
+    "build:app": "electron-builder -mwl --config ./electron-builder.js",
+    "electron": "NODE_ENV=production electron ./electron/electron.js",
+    "docker:build:app": "docker-compose -f docker-compose-electron.yml up --force-recreate",
     "lint": "npm run lint:tslint && npm run lint:eslint",
     "lint:eslint": "eslint -c .eslintrc.json '{src,tests}/**/*.{js,jsx}'",
     "lint:tslint": "tslint -c tslint.json '{src,tests}/**/*.{ts,tsx}'",
@@ -30,9 +37,10 @@
     "test:jest": "jest",
     "test:hermione": "node ./hermione/index.js",
     "test:lighthouse": "mocha -r ts-node/register --recursive tests/lighthouse/index.ts",
-    "postinstall": "npm run postinstall:git-lfs && npm run postinstall:husky",
+    "postinstall": "npm run postinstall:git-lfs && npm run postinstall:husky && npm run postinstall:electron",
     "postinstall:git-lfs": "git lfs update --force",
-    "postinstall:husky": "cd ./node_modules/husky && npm run install -- --append"
+    "postinstall:husky": "cd ./node_modules/husky && npm run install -- --append",
+    "postinstall:electron": "electron-builder install-app-deps"
   },
   "dependencies": {
     "@sentry/browser": "^4.4.1",
@@ -76,13 +84,14 @@
     "babel-loader": "^8.0.4",
     "babel-preset-env": "^1.7.0",
     "bind-decorator": "^1.0.11",
-    "cache-loader": "^1.2.5",
     "chai": "^4.2.0",
     "chrome-launcher": "^0.10.5",
     "console-notifier": "^1.0.0",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^1.0.0",
     "dnscache": "^1.0.1",
+    "electron": "^3.0.13",
+    "electron-builder": "^20.38.3",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.7.1",
     "eslint": "^5.10.0",
@@ -90,7 +99,7 @@
     "eslint-plugin-react": "^7.11.1",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^2.0.0",
-    "hermione": "^1.0.1",
+    "hermione": "^1.0.3",
     "hermione-faildump": "^3.0.0",
     "hermione-global-hook": "^1.0.1",
     "hermione-skip-runner": "^3.0.0",
