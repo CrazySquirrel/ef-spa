@@ -1,6 +1,7 @@
 {
   "name": "EF-SPA",
   "short_name": "EF-SPA",
+  "long_name": "Even Faster Single Page Application",
   "icons": [
     {
       "src": "/favicon/android-chrome-36x36.png",
