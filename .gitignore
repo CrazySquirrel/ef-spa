@@ -10,3 +10,6 @@
 /coverage
 /hermione-report
 /stat-reporter
+
+/electron/**
+!/electron/package.json

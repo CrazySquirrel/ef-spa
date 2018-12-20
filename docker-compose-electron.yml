@@ -1,0 +1,9 @@
+version: "3"
+services:
+  electron-builder:
+    image: electronuserland/electron-builder:wine
+    volumes:
+    - $PWD:/project
+    - ~/.cache/electron:/root/.cache/electron
+    - ~/.cache/electron-builder:/root/.cache/electron-builder
+    command: npm run build:app
