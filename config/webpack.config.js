@@ -35,13 +35,27 @@ const getTarget = (target) => {
   const isClient = target === 'client';
   const isServer = target === 'server';
   const isWebWorker = target === 'webworker';
+  const isElectronMain = target === 'electron-main';
+  const isElectronRenderer = target === 'electron-renderer';
 
   if (isClient) {
     return 'web';
-  } else if (isServer) {
+  }
+
+  if (isServer) {
     return 'node';
-  } else if (isWebWorker) {
+  }
+
+  if (isWebWorker) {
     return 'webworker';
+  }
+
+  if (isElectronMain) {
+    return 'electron-main';
+  }
+
+  if (isElectronRenderer) {
+    return 'electron-renderer';
   }
 };
 
@@ -49,6 +63,8 @@ const getEntry = (target) => {
   const isClient = target === 'client';
   const isServer = target === 'server';
   const isWebWorker = target === 'webworker';
+  const isElectronMain = target === 'electron-main';
+  const isElectronRenderer = target === 'electron-renderer';
 
   if (isClient) {
     return {
@@ -59,13 +75,34 @@ const getEntry = (target) => {
         './src/inline.ts'
       ]
     };
-  } else if (isServer) {
+  }
+
+  if (isServer) {
     return {
       index: './src/server.tsx'
     };
-  } else if (isWebWorker) {
+  }
+
+  if (isWebWorker) {
     return {
       '../service-worker': './src/workers/service-worker.ts'
+    };
+  }
+
+  if (isElectronMain) {
+    return {
+      electron: './src/electron.ts'
+    };
+  }
+
+  if (isElectronRenderer) {
+    return {
+      index: './src/client.tsx',
+
+      inline: [
+        './src/scss/inline.scss',
+        './src/inline.ts'
+      ]
     };
   }
 };
@@ -74,26 +111,42 @@ const getOutputPath = (target) => {
   const isClient = target === 'client';
   const isServer = target === 'server';
   const isWebWorker = target === 'webworker';
+  const isElectronMain = target === 'electron-main';
+  const isElectronRenderer = target === 'electron-renderer';
 
-  if (isWebWorker) {
-    return path.resolve(__dirname, '../build/static');
-  }
-
-  if (isClient) {
+  if (isClient || isWebWorker) {
     return path.resolve(__dirname, '../build/static');
   }
 
   if (isServer) {
     return path.resolve(__dirname, '../build/server');
   }
+
+  if (isElectronMain || isElectronRenderer) {
+    return path.resolve(__dirname, '../electron');
+  }
 };
 
+function getPublicPath(target) {
+  const isElectronMain = target === 'electron-main';
+  const isElectronRenderer = target === 'electron-renderer';
+
+  if (isElectronRenderer || isElectronMain) {
+    return '/';
+  }
+
+  return '/static/';
+}
 
 module.exports = (target, mode) => {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
 
+  const isClient = target === 'client';
   const isServer = target === 'server';
+  const isWebWorker = target === 'webworker';
+  const isElectronMain = target === 'electron-main';
+  const isElectronRenderer = target === 'electron-renderer';
 
   const autoprefixer = {
     browsers: [
@@ -120,9 +173,13 @@ module.exports = (target, mode) => {
     stats: {
       children: false
     },
+    node: {
+      __dirname: false,
+      __filename: false
+    },
     output: {
       path: getOutputPath(target),
-      publicPath: '/static/',
+      publicPath: getPublicPath(target),
 
       filename: '[name].js',
       chunkFilename: '[name].js',
@@ -150,7 +207,6 @@ module.exports = (target, mode) => {
         {
           test: /\.(js|jsx)$/,
           use: [
-            'cache-loader',
             'babel-loader',
             'eslint-loader'
           ],
@@ -159,7 +215,6 @@ module.exports = (target, mode) => {
         {
           test: /\.(ts|tsx)$/,
           use: [
-            'cache-loader',
             'ts-loader',
             'tslint-loader'
           ],
@@ -177,7 +232,6 @@ module.exports = (target, mode) => {
           use: [
             isDevelopment ? require.resolve('style-loader')
               : MiniCssExtractPlugin.loader,
-            'cache-loader',
             {
               loader: require.resolve('css-loader'),
               options: {
@@ -204,7 +258,6 @@ module.exports = (target, mode) => {
           use: [
             isDevelopment ? require.resolve('style-loader')
               : MiniCssExtractPlugin.loader,
-            'cache-loader',
             {
               loader: require.resolve('css-loader'),
               options: {
@@ -240,7 +293,6 @@ module.exports = (target, mode) => {
         {
           test: /\.(jpe?g|png|gif)$/,
           use: [
-            'cache-loader',
             {
               loader: 'url-loader',
               options: {
@@ -253,11 +305,10 @@ module.exports = (target, mode) => {
         {
           test: /\.svg$/,
           use: [
-            'cache-loader',
             {
               loader: 'svg-sprite-loader',
               options: {
-                extract: true
+                extract: !isElectronRenderer
               }
             },
             'image-webpack-loader'
@@ -267,16 +318,25 @@ module.exports = (target, mode) => {
     },
     plugins: [
       ...(
-        target === 'client' ? [
-          new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: 'public/index.html',
-            excludeAssets: [
-              /inline.(css|js)/
-            ]
-          }),
-          new HtmlWebpackExcludeAssetsPlugin()
-        ] : []
+          isClient ? [
+            new HtmlWebpackPlugin({
+              filename: 'index.html',
+              template: 'public/index.html',
+              excludeAssets: [
+                /inline.(css|js)/
+              ]
+            }),
+            new HtmlWebpackExcludeAssetsPlugin()
+          ] : []
+      ),
+      ...(
+          isElectronRenderer ? [
+            new HtmlWebpackPlugin({
+              filename: 'index.html',
+              template: 'public/electron.html'
+            }),
+            new HtmlWebpackExcludeAssetsPlugin()
+          ] : []
       ),
       new webpack.DefinePlugin({
         name: JSON.stringify(PACKAGE.name),
@@ -309,6 +369,19 @@ module.exports = (target, mode) => {
         {
           from: path.resolve(__dirname, '../public/robots.txt'),
           to: path.resolve(__dirname, '../build/robots.txt')
+        },
+
+        {
+          from: path.resolve(__dirname, '../src/images'),
+          to: path.resolve(__dirname, '../electron/images')
+        },
+        {
+          from: path.resolve(__dirname, '../public/favicon'),
+          to: path.resolve(__dirname, '../electron/favicon')
+        },
+        {
+          from: path.resolve(__dirname, '../public/robots.txt'),
+          to: path.resolve(__dirname, '../electron/robots.txt')
         }
       ]),
       ...(
@@ -321,7 +394,7 @@ module.exports = (target, mode) => {
       )
     ],
     optimization: {
-      minimize: !isServer && isProduction,
+      minimize: (isClient || isWebWorker) && isProduction,
       minimizer: [
         new UglifyJsPlugin({
           cache: true,
