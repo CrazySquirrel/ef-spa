@@ -91,7 +91,7 @@ const getEntry = (target) => {
 
   if (isElectronMain) {
     return {
-      electron: './src/electron.ts'
+      electron: './src/electron-main.ts'
     };
   }
 
@@ -145,8 +145,8 @@ module.exports = (target, mode) => {
   const isClient = target === 'client';
   const isServer = target === 'server';
   const isWebWorker = target === 'webworker';
-  const isElectronMain = target === 'electron-main';
   const isElectronRenderer = target === 'electron-renderer';
+  const isStorybook = target === 'storybook';
 
   const autoprefixer = {
     browsers: [
@@ -230,7 +230,7 @@ module.exports = (target, mode) => {
         {
           test: /\.css$/,
           use: [
-            isDevelopment ? require.resolve('style-loader')
+              (isDevelopment || isStorybook) ? require.resolve('style-loader')
               : MiniCssExtractPlugin.loader,
             {
               loader: require.resolve('css-loader'),
@@ -256,7 +256,7 @@ module.exports = (target, mode) => {
         {
           test: /\.scss$/,
           use: [
-            isDevelopment ? require.resolve('style-loader')
+              (isDevelopment || isStorybook) ? require.resolve('style-loader')
               : MiniCssExtractPlugin.loader,
             {
               loader: require.resolve('css-loader'),
@@ -290,6 +290,17 @@ module.exports = (target, mode) => {
             }
           ]
         },
+          {
+              test: /\.md$/,
+              use: [
+                  {
+                      loader: 'html-loader',
+                  },
+                  {
+                      loader: 'markdown-loader',
+                  },
+              ],
+          },
         {
           test: /\.(jpe?g|png|gif)$/,
           use: [
@@ -308,7 +319,7 @@ module.exports = (target, mode) => {
             {
               loader: 'svg-sprite-loader',
               options: {
-                extract: !isElectronRenderer
+                extract: !isElectronRenderer && !isStorybook
               }
             },
             'image-webpack-loader'
@@ -351,12 +362,16 @@ module.exports = (target, mode) => {
       new SpriteLoaderPlugin({
         plainSprite: true
       }),
-      new ExtractTextPlugin({
-        filename: '[name].css'
-      }),
-      new MiniCssExtractPlugin({
-        filename: '[name].css'
-      }),
+        ...(
+            !isStorybook ? [
+                new ExtractTextPlugin({
+                    filename: '[name].css'
+                }),
+                new MiniCssExtractPlugin({
+                    filename: '[name].css'
+                })
+            ] : []
+        ),
       new CopyWebpackPlugin([
         {
           from: path.resolve(__dirname, '../src/images'),
