@@ -13,3 +13,5 @@
 
 /electron/**
 !/electron/package.json
+
+/docs
