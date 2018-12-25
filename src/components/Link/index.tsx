@@ -1,3 +1,5 @@
+declare const target: string;
+
 import * as React from 'react';
 import * as bem from 'bem-cn';
 
@@ -28,7 +30,7 @@ export default class Link extends React.Component<Props, {}> {
     };
 
     if (this.props.to) {
-      if (this.props.to.startsWith('http')) {
+      if (this.props.to.startsWith('http') || target === 'storybook') {
         return (
             <a
                 {...locals}
