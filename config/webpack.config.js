@@ -145,7 +145,6 @@ module.exports = (target, mode) => {
   const isClient = target === 'client';
   const isServer = target === 'server';
   const isWebWorker = target === 'webworker';
-  const isElectronMain = target === 'electron-main';
   const isElectronRenderer = target === 'electron-renderer';
   const isStorybook = target === 'storybook';
 
