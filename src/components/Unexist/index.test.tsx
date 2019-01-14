@@ -5,8 +5,6 @@ import Unexist from './index';
 
 describe('Unexist', () => {
   it('render', () => {
-    const result = shallow(<Unexist/>);
-
-    expect(result).toMatchSnapshot();
+    expect(shallow(<Unexist/>)).toMatchSnapshot();
   });
 });

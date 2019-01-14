@@ -2,12 +2,17 @@ import * as React from 'react';
 
 import {shallow} from 'enzyme';
 
-import {IconChat} from './index';
+import {Icon, IconChat} from './index';
 
-describe('IconChat', () => {
-  it('render', () => {
-    const result = shallow(<IconChat/>);
+describe('Icons', () => {
+  it('IconChat', () => {
+    expect(shallow(<IconChat/>)).toMatchSnapshot();
+  });
 
-    expect(result).toMatchSnapshot();
+  it('Icon', () => {
+    expect(Icon({
+      id: 'test',
+      viewBox: '0 0 100 100',
+    }, {})).toMatchSnapshot();
   });
 });

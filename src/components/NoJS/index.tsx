@@ -3,10 +3,10 @@ declare const target: string;
 import * as React from 'react';
 import * as bem from 'bem-cn';
 
+const block = bem('no-js');
+
 export default class NoJS extends React.Component {
     public render() {
-        const block = bem('no-js');
-
         if (target === 'storybook') {
             return (
                 <div className={block()}>

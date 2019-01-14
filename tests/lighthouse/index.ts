@@ -28,7 +28,7 @@ const CHAI = require('chai');
 
 // Tested urls
 const URLs = [
-    'https://ef-spa.crazysquirrel.ru/',
+  'https://ef-spa.crazysquirrel.ru/',
 ];
 
 // Chrome options
@@ -83,23 +83,31 @@ describe('LightHouse', () => {
         // Process report score
         for (const key in audits) {
           if (audits.hasOwnProperty(key)) {
-            if (audits[key].scoreDisplayMode === 'binary') {
-              if (audits[key].score !== 1) {
+            // tslint:disable
+            switch (audits[key].scoreDisplayMode) {
+              case 'binary':
+                if (audits[key].score !== 1) {
+                  console.log(audits[key].id);
+                }
+                break;
+              case 'numeric':
+                if (audits[key].score !== 1) {
+                  console.log(audits[key].id);
+                }
+                break;
+              case 'manual':
+                // console.log(audits[key]);
+                break;
+              case 'informative':
+                // console.log(audits[key]);
+                break;
+              case 'not-applicable':
+                // console.log(audits[key]);
+                break;
+              default:
                 console.log(audits[key].id);
-              }
-            } else if (audits[key].scoreDisplayMode === 'numeric') {
-              if (audits[key].score !== 1) {
-                console.log(audits[key].id);
-              }
-            } else if (audits[key].scoreDisplayMode === 'manual') {
-              // console.log(audits[key]);
-            } else if (audits[key].scoreDisplayMode === 'informative') {
-              // console.log(audits[key]);
-            } else if (audits[key].scoreDisplayMode === 'not-applicable') {
-              // console.log(audits[key]);
-            } else {
-              console.log(audits[key].id);
             }
+            // tslint:enable
           }
         }
 

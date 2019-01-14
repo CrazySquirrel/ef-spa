@@ -4,6 +4,7 @@ import * as bem from 'bem-cn';
 import Logotype from 'components/Logotype';
 
 import {connect} from 'react-redux';
+import {Dispatch} from 'redux';
 import {StoreTree} from 'store/index';
 import {AsideAction, Type} from 'store/reducers/aside';
 
@@ -13,10 +14,10 @@ interface Props {
 
 import './index.scss';
 
+const block = bem('aside');
+
 export class Aside extends React.Component<Props, {}> {
   public render() {
-    const block = bem('aside');
-
     return (
         <aside className={block()}>
             <span className={block('icons')()}>
@@ -27,11 +28,12 @@ export class Aside extends React.Component<Props, {}> {
   }
 }
 
-export default connect(
-    (state: StoreTree) => ({
-      aside: state.aside,
-    }),
-    (dispatch) => ({
-      update: (aside: Type) => dispatch(AsideAction.aside(aside)),
-    }),
-)(Aside);
+export const mapStateToProps = (state: StoreTree) => ({
+  aside: state.aside,
+});
+
+export const mapDispatchToProps = (dispatch: Dispatch) => ({
+  update: (aside: Type) => dispatch(AsideAction.aside(aside)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Aside);

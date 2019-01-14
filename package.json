@@ -43,9 +43,8 @@
     "lint:eslint": "eslint -c .eslintrc.json '{.storybook,config,hermione,public,scripts,server,src,tests,utils}/**/*.{js,jsx}'",
     "lint:tslint": "tslint -c tslint.json --project tsconfig.json '{.storybook,config,hermione,public,scripts,server,src,tests,utils}/**/*.{ts,tsx}'",
     "lint:stylelint": "stylelint '{.storybook,config,hermione,public,scripts,server,src,tests,utils}/**/*.{css,scss}' --syntax scss",
-    "test": "npm run test:snyk && npm run test:jest && npm run test:hermione && npm run test:lighthouse",
+    "test": "npm run test:jest && npm run test:hermione && npm run test:lighthouse",
     "test:jest": "jest",
-    "test:snyk": "snyk test",
     "test:hermione": "node ./hermione/index.js",
     "test:lighthouse": "mocha -r ts-node/register --recursive tests/lighthouse/index.ts",
     "postinstall": "npm run postinstall:git-lfs && npm run postinstall:husky && npm run postinstall:electron",
@@ -178,9 +177,8 @@
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "npm run test:snyk && npm run lint && npm run test:jest",
+      "pre-commit": "npm run lint && npm run test:jest",
       "pre-push": [
-        "npm run test:snyk",
         "npm run lint",
         "npm run test:jest",
         "npm run test:hermione",

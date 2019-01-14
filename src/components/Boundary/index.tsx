@@ -5,7 +5,7 @@ interface Props {
 }
 
 interface State {
-  error: any;
+  error: Error;
 }
 
 export default class Boundary extends React.Component<Props, State> {
@@ -17,12 +17,12 @@ export default class Boundary extends React.Component<Props, State> {
     };
   }
 
-  public componentDidCatch(error: any, errorInfo: any) {
+  public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     this.setState({error});
 
     Sentry.withScope((scope) => {
       Object.keys(errorInfo).forEach((key) => {
-        scope.setExtra(key, errorInfo[key]);
+        scope.setExtra(key, (errorInfo as any)[key]);
       });
 
       Sentry.captureException(error);
@@ -30,11 +30,9 @@ export default class Boundary extends React.Component<Props, State> {
   }
 
   public render() {
+    // istanbul ignore next
     if (this.state.error) {
-      // render fallback UI
-      return (
-          <a onClick={() => Sentry.showReportDialog()}>Отправить отчет</a>
-      );
+      return (<a onClick={() => Sentry.showReportDialog()}>Отправить отчет</a>);
     } else {
       // when there's not an error, render children untouched
       return this.props.children;

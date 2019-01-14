@@ -60,7 +60,7 @@ self.addEventListener('install', () => {
     // Prefetch all external resources
     serviceWorkerCachePaths
     .filter((url) => !(url.startsWith('/') || url.startsWith(location.origin)))
-    .map((url) => fetchToCache(cache, new Request(url)));
+    .forEach((url) => fetchToCache(cache, new Request(url)));
   });
 });
 

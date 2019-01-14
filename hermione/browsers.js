@@ -1,10 +1,34 @@
+const chromeBrowserSettings = {
+  browserName: 'chrome',
+  calibrate: true,
+  compositeImage: true,
+  screenshotMode: 'viewport',
+};
+
+const iPadUserAgent = [
+  'Mozilla/5.0',
+  '(iPad; CPU OS 10_2_1 like Mac OS X)',
+  'AppleWebKit/602.4.6',
+  '(KHTML, like Gecko)',
+  'Version/10.0',
+  'Mobile/14D27',
+  'Safari/602.1'
+].join(' ');
+
+const iPhoneUserAgent = [
+  'Mozilla/5.0',
+  '(iPhone; CPU iPhone OS 10_1_1 like Mac OS X)',
+  'AppleWebKit/602.2.14',
+  '(KHTML, like Gecko)',
+  'Version/10.0',
+  'Mobile/14B100',
+  'Safari/602.1'
+].join(' ');
+
 module.exports = {
   'chrome': {
     desiredCapabilities: {
-      browserName: 'chrome',
-      calibrate: true,
-      compositeImage: true,
-      screenshotMode: 'viewport',
+      ...chromeBrowserSettings,
       windowSize: '1280x1024',
       meta: {
         platform: 'desktop'
@@ -13,10 +37,7 @@ module.exports = {
   },
   'ipad-portrait': {
     desiredCapabilities: {
-      browserName: 'chrome',
-      calibrate: true,
-      compositeImage: true,
-      screenshotMode: 'viewport',
+      ...chromeBrowserSettings,
       orientation: 'portrait',
       meta: {
         platform: 'touch-pad'
@@ -28,25 +49,14 @@ module.exports = {
             height: 1024,
             pixelRatio: 2.0
           },
-          userAgent: [
-            'Mozilla/5.0',
-            '(iPad; CPU OS 10_2_1 like Mac OS X)',
-            'AppleWebKit/602.4.6',
-            '(KHTML, like Gecko)',
-            'Version/10.0',
-            'Mobile/14D27',
-            'Safari/602.1'
-          ].join(' ')
+          userAgent: iPadUserAgent
         }
       }
     }
   },
   'ipad-landscape': {
     desiredCapabilities: {
-      browserName: 'chrome',
-      calibrate: true,
-      compositeImage: true,
-      screenshotMode: 'viewport',
+      ...chromeBrowserSettings,
       orientation: 'landscape',
       meta: {
         platform: 'touch-pad'
@@ -58,25 +68,14 @@ module.exports = {
             height: 768,
             pixelRatio: 2.0
           },
-          userAgent: [
-            'Mozilla/5.0',
-            '(iPad; CPU OS 10_2_1 like Mac OS X)',
-            'AppleWebKit/602.4.6',
-            '(KHTML, like Gecko)',
-            'Version/10.0',
-            'Mobile/14D27',
-            'Safari/602.1'
-          ].join(' ')
+          userAgent: iPadUserAgent
         }
       }
     }
   },
   'iphone-portrait': {
     desiredCapabilities: {
-      browserName: 'chrome',
-      calibrate: true,
-      compositeImage: true,
-      screenshotMode: 'viewport',
+      ...chromeBrowserSettings,
       orientation: 'portrait',
       meta: {
         platform: 'touch-phone'
@@ -88,25 +87,14 @@ module.exports = {
             height: 568,
             pixelRatio: 2.0
           },
-          userAgent: [
-            'Mozilla/5.0',
-            '(iPhone; CPU iPhone OS 10_1_1 like Mac OS X)',
-            'AppleWebKit/602.2.14',
-            '(KHTML, like Gecko)',
-            'Version/10.0',
-            'Mobile/14B100',
-            'Safari/602.1'
-          ].join(' ')
+          userAgent: iPhoneUserAgent
         }
       }
     }
   },
   'iphone-landscape': {
     desiredCapabilities: {
-      browserName: 'chrome',
-      calibrate: true,
-      compositeImage: true,
-      screenshotMode: 'viewport',
+      ...chromeBrowserSettings,
       orientation: 'landscape',
       meta: {
         platform: 'touch-phone'
@@ -118,15 +106,7 @@ module.exports = {
             height: 320,
             pixelRatio: 2.0
           },
-          userAgent: [
-            'Mozilla/5.0',
-            '(iPhone; CPU iPhone OS 10_1_1 like Mac OS X)',
-            'AppleWebKit/602.2.14',
-            '(KHTML, like Gecko)',
-            'Version/10.0',
-            'Mobile/14B100',
-            'Safari/602.1'
-          ].join(' ')
+          userAgent: iPhoneUserAgent
         }
       }
     }

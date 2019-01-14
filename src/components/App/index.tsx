@@ -1,6 +1,9 @@
 import * as React from 'react';
 import * as bem from 'bem-cn';
 
+import bind from 'bind-decorator';
+
+// istanbul ignore next
 import {RouteAction} from 'store/reducers/router';
 
 import Aside from 'components/Aside';
@@ -12,6 +15,7 @@ import {Publisher, Author} from 'components/Metatags';
 import {StoreTree} from '../../store';
 import {connect} from 'react-redux';
 
+// istanbul ignore next
 import {
   MetadataImage,
   MetadataVideo,
@@ -22,7 +26,7 @@ import {
 
 declare const webmanifest: any;
 
-interface Props {
+interface OwnProps {
   menu?: string;
   title?: string;
   description?: string;
@@ -33,21 +37,28 @@ interface Props {
   images?: MetadataImage[];
   videos?: MetadataVideo[];
   audios?: MetadataAudio[];
+}
 
+interface StateProps {
   location?: string;
   modified?: string;
 
   update?: (location: string) => any;
 }
 
+interface Props extends OwnProps, StateProps {
+}
+
 interface State {
-  href: string;
-  pathname: string;
 }
 
 import './index.scss';
+import {Dispatch} from 'redux';
+
+const block = bem('app');
 
 export class App extends React.Component<Props, State> {
+  private ref: HTMLElement;
   private images: MetadataImage[];
 
   public constructor(props: Props) {
@@ -66,11 +77,6 @@ export class App extends React.Component<Props, State> {
         alt: v.alt || props.title,
       };
     });
-
-    this.state = {
-      href: '',
-      pathname: '',
-    };
   }
 
   public componentDidMount() {
@@ -78,48 +84,12 @@ export class App extends React.Component<Props, State> {
       this.props.update(location.pathname);
     }
 
-    this.setState({
-      href: location.href,
-      pathname: location.pathname,
-    });
-
-    [
-      document.querySelector('.app__metadata title'),
-      ...Array.from(document.querySelectorAll('.app__metadata meta')),
-    ].forEach((v) => {
-      if (v) {
-        let node;
-
-        if (v.nodeName === 'TITLE') {
-          node = document.head.querySelector('title');
-        } else if (v.nodeName === 'META' && v.getAttribute('last-modified')) {
-          node = document.head.querySelector(`meta[last-modified='${v.getAttribute('last-modified')}']`);
-        } else if (v.nodeName === 'META' && v.getAttribute('name') && v.getAttribute('content')) {
-          node = document.head.querySelector(`meta[name='${v.getAttribute('name')}'][content='${v.getAttribute('content')}']`);
-        } else if (v.nodeName === 'META' && v.getAttribute('property') && v.getAttribute('content')) {
-          node = document.head.querySelector(`meta[property='${v.getAttribute('property')}'][content='${v.getAttribute('content')}']`);
-        }
-
-        if (node) {
-          node.parentElement.removeChild(node);
-        }
-
-        document.head.appendChild(v);
-      }
-    });
-
-    const metadataTag = document.querySelector('.app__metadata');
-
-    if (metadataTag) {
-      metadataTag.parentElement.removeChild(metadataTag);
-    }
+    this.updateMetatags();
   }
 
   public render() {
-    const block = bem('app');
-
     return (
-        <section className={block()} {...this.getProps()}>
+        <section className={block()} {...this.getProps()} ref={this.handleRef}>
           {this.generateMetadata()}
           <Aside/>
           <Main key='main'>
@@ -128,6 +98,44 @@ export class App extends React.Component<Props, State> {
           </Main>
         </section>
     );
+  }
+
+  @bind
+  private handleRef(ref: HTMLElement) {
+    this.ref = ref;
+  }
+
+  private updateMetatags() {
+    if (!this.ref) {
+      return;
+    }
+
+    [
+      this.ref.querySelector('.app__metadata title'),
+      ...Array.from(this.ref.querySelectorAll('.app__metadata meta')),
+    ].forEach((v) => {
+      let node;
+
+      if (v.nodeName === 'META' && v.getAttribute('last-modified')) {
+        node = document.head.querySelector(`meta[last-modified='${v.getAttribute('last-modified')}']`);
+      } else if (v.nodeName === 'META' && v.getAttribute('name') && v.getAttribute('content')) {
+        node = document.head.querySelector(`meta[name='${v.getAttribute('name')}'][content='${v.getAttribute('content')}']`);
+      } else if (v.nodeName === 'META' && v.getAttribute('property') && v.getAttribute('content')) {
+        node = document.head.querySelector(`meta[property='${v.getAttribute('property')}'][content='${v.getAttribute('content')}']`);
+      } else {
+        node = document.head.querySelector('title');
+      }
+
+      if (node) {
+        node.parentElement.removeChild(node);
+      }
+
+      document.head.appendChild(v);
+    });
+
+    const metadataTag = this.ref.querySelector('.app__metadata');
+
+    metadataTag.parentElement.removeChild(metadataTag);
   }
 
   private getProps() {
@@ -142,8 +150,6 @@ export class App extends React.Component<Props, State> {
   }
 
   private getContent() {
-    const block = bem('app');
-
     if (this.props.type === MetadataType.ARTICLE) {
       const siteUrl = webmanifest.start_url.replace(/\/$/ig, '');
 
@@ -194,57 +200,78 @@ export class App extends React.Component<Props, State> {
   }
 
   private generateMetadata() {
-    const block = bem('app');
-
     const siteUrl = webmanifest.start_url.replace(/\/$/ig, '');
 
     return (
         <div className={block('metadata')()}>
-          <title>{this.props.title}</title>
+          {this.props.title && (
+              <title>{this.props.title}</title>
+          )}
 
-          <meta name='description' content={this.props.description}/>
-          <meta name='keywords' content={this.props.keywords}/>
+          {this.props.description && (
+              <meta name='description' content={this.props.description}/>
+          )}
 
-          <meta last-modified={this.props.modified}/>
+          {this.props.keywords && (
+              <meta name='keywords' content={this.props.keywords}/>
+          )}
 
-          <meta property='og:title' content={this.props.title}/>
-          <meta property='og:description' content={this.props.description}/>
+          {this.props.modified && (
+              <meta last-modified={this.props.modified}/>
+          )}
+
+          {this.props.title && (
+              <meta property='og:title' content={this.props.title}/>
+          )}
+
+          {this.props.description && (
+              <meta property='og:description' content={this.props.description}/>
+          )}
 
           <meta property='og:type' content='website'/>
-          <meta property='og:url' content={`${siteUrl}${this.props.location}`}/>
-          <meta property='og:locale' content='ru_RU'/>
 
-          <meta property='og:site_name' content={webmanifest.short_name}/>
-          <meta property='og:updated_time' content={this.props.modified}/>
+          {siteUrl && this.props.location && (
+              <meta property='og:url' content={`${siteUrl}${this.props.location}`}/>
+          )}
 
-          {this.images && this.images.map((v: MetadataImage) => {
+          <meta property='og:locale' content='en_EN'/>
+
+          {webmanifest.short_name && (
+              <meta property='og:site_name' content={webmanifest.short_name}/>
+          )}
+
+          {this.props.modified && (
+              <meta property='og:updated_time' content={this.props.modified}/>
+          )}
+
+          {Array.isArray(this.images) && this.images.map((v: MetadataImage) => {
             return (
                 <div key={v.src}>
-                  <meta property='og:image' content={v.src}/>
-                  <meta property='og:image:type' content={v.type}/>
-                  <meta property='og:image:width' content={v.width}/>
-                  <meta property='og:image:height' content={v.height}/>
-                  <meta property='og:image:alt' content={v.alt}/>
+                  {v.src && (<meta property='og:image' content={v.src}/>)}
+                  {v.type && (<meta property='og:image:type' content={v.type}/>)}
+                  {v.width && (<meta property='og:image:width' content={v.width}/>)}
+                  {v.height && (<meta property='og:image:height' content={v.height}/>)}
+                  {v.alt && (<meta property='og:image:alt' content={v.alt}/>)}
                 </div>
             );
           })}
 
-          {this.props.videos && this.props.videos.map((v: MetadataVideo) => {
+          {Array.isArray(this.props.videos) && this.props.videos.map((v: MetadataVideo) => {
             return (
                 <div key={v.src}>
-                  <meta property='og:video' content={v.src}/>
-                  <meta property='og:video:type' content={v.type}/>
-                  <meta property='og:video:width' content={v.width}/>
-                  <meta property='og:video:height' content={v.height}/>
+                  {v.src && (<meta property='og:video' content={v.src}/>)}
+                  {v.type && (<meta property='og:video:type' content={v.type}/>)}
+                  {v.width && (<meta property='og:video:width' content={v.width}/>)}
+                  {v.height && (<meta property='og:video:height' content={v.height}/>)}
                 </div>
             );
           })}
 
-          {this.props.audios && this.props.audios.map((v: MetadataAudio) => {
+          {Array.isArray(this.props.audios) && this.props.audios.map((v: MetadataAudio) => {
             return (
                 <div key={v.src}>
-                  <meta property='og:audio' content={v.src}/>
-                  <meta property='og:audio:type' content={v.type}/>
+                  {v.src && (<meta property='og:audio' content={v.src}/>)}
+                  {v.type && (<meta property='og:audio:type' content={v.type}/>)}
                 </div>
             );
           })}
@@ -253,12 +280,13 @@ export class App extends React.Component<Props, State> {
   }
 }
 
-export default connect(
-    (state: StoreTree) => ({
-      location: state.location,
-      modified: state.modified,
-    }),
-    (dispatch) => ({
-      update: (location: string) => dispatch(RouteAction.update(location)),
-    }),
-)(App);
+export const mapStateToProps = (state: StoreTree) => ({
+  location: state.location,
+  modified: state.modified,
+});
+
+export const mapDispatchToProps = (dispatch: Dispatch) => ({
+  update: (location: string) => dispatch(RouteAction.update(location)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -5,8 +5,12 @@ import NoJS from './index';
 
 describe('NoJS', () => {
   it('render', () => {
-    const result = shallow(<NoJS/>);
+    expect(shallow(<NoJS/>)).toMatchSnapshot();
+  });
 
-    expect(result).toMatchSnapshot();
+  it('render storybook', () => {
+    (global as any).target = 'storybook';
+
+    expect(shallow(<NoJS/>)).toMatchSnapshot();
   });
 });

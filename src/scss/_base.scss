@@ -26,8 +26,8 @@ $media-retina: "only screen and (-webkit-min-device-pixel-ratio: 2), only screen
 
 @mixin retinabg($url, $url2x, $size, $position, $repeat) {
   background-image: image-url($url);
-  background-repeat: $repeat;
   background-position: $position;
+  background-repeat: $repeat;
   background-size: $size;
   @media #{$media-retina} {
     background-image: image-url($url2x);

@@ -13,7 +13,7 @@ interface Pages {
 }
 
 export const PAGES: Pages = new Proxy(
-    Routs,
+    Routs || {},
     {
       get(obj: Pages, prop: string) {
         return prop in obj ? obj[prop] : obj['*'];

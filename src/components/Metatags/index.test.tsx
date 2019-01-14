@@ -7,16 +7,12 @@ import {siastrebov} from '../../authors';
 
 describe('Author', () => {
   it('render', () => {
-    const result = shallow(<Author {...siastrebov}/>);
-
-    expect(result).toMatchSnapshot();
+    expect(shallow(<Author {...siastrebov}/>)).toMatchSnapshot();
   });
 });
 
 describe('Publisher', () => {
   it('render', () => {
-    const result = shallow(<Publisher/>);
-
-    expect(result).toMatchSnapshot();
+    expect(shallow(<Publisher/>)).toMatchSnapshot();
   });
 });

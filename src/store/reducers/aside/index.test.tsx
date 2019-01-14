@@ -8,6 +8,8 @@ describe('Aside', () => {
     };
 
     expect(AsideHandle({}, action)).toEqual({aside: Type.MENU});
+
+    expect(AsideAction.aside(Type.MENU)).toEqual({payload: Type.MENU, type: action.type});
   });
 
   it('reduce - type - language', () => {
@@ -17,5 +19,7 @@ describe('Aside', () => {
     };
 
     expect(AsideHandle({}, action)).toEqual({aside: Type.LANGUAGE});
+
+    expect(AsideAction.aside(Type.LANGUAGE)).toEqual({payload: Type.LANGUAGE, type: action.type});
   });
 });

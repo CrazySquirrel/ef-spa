@@ -1,21 +1,21 @@
 import {RouteAction, RouteHandle} from './index';
 
 describe('Router', () => {
-  it('reduce - location - /', () => {
-    const action = {
-      type: RouteAction.update.toString(),
-      payload: '/',
-    };
+  const action = {
+    type: RouteAction.update.toString(),
+  };
 
-    expect(RouteHandle({}, action)).toEqual({location: '/'});
+  it('reduce - location - /', () => {
+    expect(RouteHandle({}, {
+      ...action,
+      payload: '/',
+    })).toEqual({location: '/'});
   });
 
   it('reduce - location - /test/', () => {
-    const action = {
-      type: RouteAction.update.toString(),
+    expect(RouteHandle({}, {
+      ...action,
       payload: '/test/',
-    };
-
-    expect(RouteHandle({}, action)).toEqual({location: '/test/'});
+    })).toEqual({location: '/test/'});
   });
 });
