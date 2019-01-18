@@ -3,6 +3,10 @@ import {prop, guid} from './index';
 describe('Tools', () => {
   it('prop', () => {
     expect(prop({}, '', '')).toEqual('');
+
+    expect(prop({}, '')).toEqual(undefined);
+
+    expect(prop({})).toEqual(undefined);
   });
 
   it('guid', () => {

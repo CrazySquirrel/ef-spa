@@ -24,10 +24,10 @@ interface Props {
 
 import './index.scss';
 
+const block = bem('unexist');
+
 export default class Unexist extends React.Component<Props, {}> {
   public render() {
-    const block = bem('unexist');
-
     return (
         <section className={block()}>
           <h1 className={block('title')()}>{this.props.h1}</h1>

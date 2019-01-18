@@ -5,8 +5,6 @@ import Logotype from './index';
 
 describe('Logotype', () => {
   it('render', () => {
-    const result = shallow(<Logotype/>);
-
-    expect(result).toMatchSnapshot();
+    expect(shallow(<Logotype/>)).toMatchSnapshot();
   });
 });

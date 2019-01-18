@@ -4,6 +4,10 @@ const FS = require('fs');
 const PATH = require('path');
 const MINIFY_HTML = require('html-minifier').minify;
 
+const CRYPTO = require('crypto');
+
+const SHA256 = (str) => CRYPTO.createHash('sha256').update(str, 'utf8').digest('base64');
+
 // Get static path
 const STATIC = __dirname + '/../../build';
 
@@ -94,7 +98,9 @@ module.exports = (APP, RAVEN) => {
           const html = MINIFY_HTML(
               HTML
               .replace(/%INLINE_STYLE%/ig, INLINE_STYLE)
+              .replace(/%INLINE_STYLE_CSP%/ig, SHA256(INLINE_STYLE))
               .replace(/%INLINE_SCRIPT%/ig, INLINE_SCRIPT)
+              .replace(/%INLINE_SCRIPT_CSP%/ig, SHA256(INLINE_SCRIPT))
               .replace(/%APP%/ig, result)
               .replace(/%SVG_SPRITE%/ig, SVG)
               .replace(/%PRELOADED_STATE%/ig, serialize(store.getState())),

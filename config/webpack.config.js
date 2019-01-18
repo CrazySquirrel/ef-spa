@@ -12,10 +12,13 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
+const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
 const SpriteLoaderPlugin = require('svg-sprite-loader/plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
 
 const Pages = glob.sync('./src/pages/**/index.tsx').map((v) => {
@@ -230,8 +233,9 @@ module.exports = (target, mode) => {
         {
           test: /\.css$/,
           use: [
-              (isDevelopment || isStorybook) ? require.resolve('style-loader')
-              : MiniCssExtractPlugin.loader,
+            (
+                isDevelopment || isStorybook
+            ) ? require.resolve('style-loader') : MiniCssExtractPlugin.loader,
             {
               loader: require.resolve('css-loader'),
               options: {
@@ -256,8 +260,9 @@ module.exports = (target, mode) => {
         {
           test: /\.scss$/,
           use: [
-              (isDevelopment || isStorybook) ? require.resolve('style-loader')
-              : MiniCssExtractPlugin.loader,
+            (
+                isDevelopment || isStorybook
+            ) ? require.resolve('style-loader') : MiniCssExtractPlugin.loader,
             {
               loader: require.resolve('css-loader'),
               options: {
@@ -290,17 +295,17 @@ module.exports = (target, mode) => {
             }
           ]
         },
-          {
-              test: /\.md$/,
-              use: [
-                  {
-                      loader: 'html-loader',
-                  },
-                  {
-                      loader: 'markdown-loader',
-                  },
-              ],
-          },
+        {
+          test: /\.md$/,
+          use: [
+            {
+              loader: 'html-loader',
+            },
+            {
+              loader: 'markdown-loader',
+            },
+          ],
+        },
         {
           test: /\.(jpe?g|png|gif)$/,
           use: [
@@ -328,6 +333,7 @@ module.exports = (target, mode) => {
       ]
     },
     plugins: [
+      new StyleLintPlugin(),
       ...(
           isClient ? [
             new HtmlWebpackPlugin({
@@ -336,8 +342,7 @@ module.exports = (target, mode) => {
               excludeAssets: [
                 /inline.(css|js)/
               ]
-            }),
-            new HtmlWebpackExcludeAssetsPlugin()
+            })
           ] : []
       ),
       ...(
@@ -345,8 +350,22 @@ module.exports = (target, mode) => {
             new HtmlWebpackPlugin({
               filename: 'index.html',
               template: 'public/electron.html'
+            })
+          ] : []
+      ),
+      ...(
+          (isClient || isElectronRenderer) ? [
+            new HtmlWebpackExcludeAssetsPlugin(),
+            new CspHtmlWebpackPlugin({
+              'base-uri': '\'self\'',
+              'object-src': '\'none\'',
+              'script-src': ['\'unsafe-inline\'', '\'self\'', '\'unsafe-eval\'', '\'nonce-%INLINE_SCRIPT_CSP%\''],
+              'style-src': ['\'unsafe-inline\'', '\'self\'', '\'unsafe-eval\'','\'nonce-%INLINE_STYLE_CSP%\'']
+            }, {
+              devAllowUnsafe: false,
+              enabled: true,
+              hashingMethod: 'sha256',
             }),
-            new HtmlWebpackExcludeAssetsPlugin()
           ] : []
       ),
       new webpack.DefinePlugin({
@@ -362,16 +381,20 @@ module.exports = (target, mode) => {
       new SpriteLoaderPlugin({
         plainSprite: true
       }),
-        ...(
-            !isStorybook ? [
-                new ExtractTextPlugin({
-                    filename: '[name].css'
-                }),
-                new MiniCssExtractPlugin({
-                    filename: '[name].css'
-                })
-            ] : []
-        ),
+      ...(
+          !isStorybook ? [
+            new ExtractTextPlugin({
+              filename: '[name].css'
+            }),
+            new MiniCssExtractPlugin({
+              filename: '[name].css'
+            })
+          ] : []
+      ),
+      new CleanWebpackPlugin(getOutputPath(target), {
+        root: __dirname + '/../',
+        exclude: [ 'package.json' ],
+      }),
       new CopyWebpackPlugin([
         {
           from: path.resolve(__dirname, '../src/images'),
@@ -400,12 +423,12 @@ module.exports = (target, mode) => {
         }
       ]),
       ...(
-        isProduction ? [
-          new ImageminPlugin({
-            disable: isDevelopment,
-            test: /\.(jpe?g|png|gif|svg)$/
-          })
-        ] : []
+          isProduction ? [
+            new ImageminPlugin({
+              disable: isDevelopment,
+              test: /\.(jpe?g|png|gif|svg)$/
+            })
+          ] : []
       )
     ],
     optimization: {
@@ -418,7 +441,20 @@ module.exports = (target, mode) => {
           extractComments: true
         }),
         new OptimizeCSSAssetsPlugin({})
-      ]
+      ],
+      splitChunks: {
+        chunks: 'all',
+        maxInitialRequests: Infinity,
+        minSize: 0,
+        cacheGroups: {
+          vendor: {
+            test: /node_modules/,
+            chunks: 'initial',
+            name: 'vendor',
+            enforce: true,
+          },
+        },
+      }
     },
     performance: {
       hints: isProduction ? 'warning' : false

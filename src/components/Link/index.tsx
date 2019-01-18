@@ -20,10 +20,10 @@ export interface Props extends React.Props<Link> {
   title?: string;
 }
 
+const block = bem('link');
+
 export default class Link extends React.Component<Props, {}> {
   public render() {
-    const block = bem('link');
-
     const locals = {
       className: this.props.replaceClassName || cn(block(), this.props.className),
       title: this.props.title || prop(PAGES[this.props.to], 'metadata.menu'),
@@ -47,7 +47,7 @@ export default class Link extends React.Component<Props, {}> {
                 {...locals}
                 to={this.props.to}
                 exact={true}
-                activeClassName={this.props.replaceClassName || block({active: true})()}
+                activeClassName={this.getActiveClassName()}
             >
               {this.props.children}
             </RoutLink>
@@ -60,5 +60,10 @@ export default class Link extends React.Component<Props, {}> {
           </span>
       );
     }
+  }
+
+  private getActiveClassName() {
+    // istanbul ignore next
+    return this.props.replaceClassName || block({active: true})();
   }
 }

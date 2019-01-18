@@ -5,8 +5,6 @@ import Main from './index';
 
 describe('Main', () => {
   it('render', () => {
-    const result = shallow(<Main/>);
-
-    expect(result).toMatchSnapshot();
+    expect(shallow(<Main/>)).toMatchSnapshot();
   });
 });

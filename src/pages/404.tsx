@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   menu: '404 Page not found',
   title: 'Page not found',
   description: 'Page not found',
-  keywords: 'Page not found',
+  keywords: '',
   h1: '404 Page not found',
   author: siastrebov,
   type: MetadataType.NONE,

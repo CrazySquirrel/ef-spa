@@ -13,14 +13,14 @@ interface IconProps {
   ref?: (node: SVGElement) => void;
 }
 
+const block = bem('icon');
+
 export function Icon(icon: Icon, props: IconProps = {}) {
   const locals = {
     fill: props.fill,
   };
 
   const id = icon && icon.id && icon.id.replace('-usage', '') || '';
-
-  const block = bem('icon');
 
   return (
       <svg className={block()} viewBox={icon && icon.viewBox || ''} ref={props.ref}>
