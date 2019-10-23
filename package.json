@@ -76,7 +76,7 @@
     "react-router-dom": "^4.3.1",
     "redux": "^4.0.1",
     "redux-actions": "^2.6.4",
-    "snyk": "^1.119.0",
+    "snyk": "^1.145.0",
     "spdy": "^4.0.0"
   },
   "devDependencies": {
