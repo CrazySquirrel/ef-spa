@@ -126,7 +126,7 @@
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^2.0.0",
     "gitbook-cli": "^2.3.2",
-    "hermione": "^1.0.3",
+    "hermione": "^5.3.1",
     "hermione-faildump": "^3.0.0",
     "hermione-global-hook": "^1.0.1",
     "hermione-skip-runner": "^3.0.0",
